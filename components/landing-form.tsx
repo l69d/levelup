@@ -1,12 +1,13 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { findRoles, type ActionState } from "@/app/actions";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Results } from "@/components/results";
 import { ApiKeyDialog } from "@/components/api-key-dialog";
 import { useApiKey, maskKey } from "@/lib/use-api-key";
+import { PROVIDERS } from "@/lib/providers";
 
 const PLACEHOLDER = `e.g. I'm a backend engineer with 3 years of experience at a fintech startup in Bangalore. Mostly Python + Django, some Postgres tuning, deployed on AWS. I've shipped one ML model to prod using sklearn. Open to remote.`;
 
@@ -15,9 +16,9 @@ export function LandingForm() {
     findRoles,
     null
   );
-  const { apiKey, setApiKey, clear, hydrated } = useApiKey();
+  const { provider, apiKey, keys, setProvider, setKey, clearKey, hydrated } =
+    useApiKey();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (state?.ok === false && state.missingKey) setDialogOpen(true);
@@ -30,6 +31,8 @@ export function LandingForm() {
     }
   };
 
+  const meta = PROVIDERS[provider];
+
   return (
     <div className="w-full flex flex-col gap-8">
       <div className="flex items-center justify-end -mb-2">
@@ -39,17 +42,17 @@ export function LandingForm() {
           className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors"
         >
           {hydrated && apiKey
-            ? `API key: ${maskKey(apiKey)} · change`
-            : "Add your Anthropic API key"}
+            ? `${meta.short} · ${maskKey(apiKey)} · change`
+            : "Add your AI provider key"}
         </button>
       </div>
 
       <form
-        ref={formRef}
         action={formAction}
         onSubmit={handleSubmit}
         className="flex flex-col gap-4"
       >
+        <input type="hidden" name="provider" value={provider} />
         <input type="hidden" name="apiKey" value={apiKey} />
         <Textarea
           name="paragraph"
@@ -80,9 +83,13 @@ export function LandingForm() {
       <ApiKeyDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        currentKey={apiKey}
-        onSave={setApiKey}
-        onClear={clear}
+        initialProvider={provider}
+        keys={keys}
+        onSave={(p, k) => {
+          setKey(p, k);
+          setProvider(p);
+        }}
+        onClear={clearKey}
       />
     </div>
   );

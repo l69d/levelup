@@ -12,14 +12,19 @@ No signup. No CV upload. Free and open source.
 
 ---
 
-## Bring your own key
+## Bring your own key — any provider
 
-levelup runs on Claude. Click **"Add your Anthropic API key"** on the page and paste a key from [console.anthropic.com](https://console.anthropic.com/settings/keys).
+Click **"Add your AI provider key"** on the page and pick:
 
-- The key lives in your browser's `localStorage`
-- It's sent only when you submit, forwarded directly to Anthropic
+| Provider | Get a key | Per search |
+|---|---|---|
+| **Claude** (Anthropic) | [console.anthropic.com](https://console.anthropic.com/settings/keys) | ~$0.01–0.03 |
+| **GPT** (OpenAI) | [platform.openai.com](https://platform.openai.com/api-keys) | ~$0.005–0.02 |
+| **DeepSeek** | [platform.deepseek.com](https://platform.deepseek.com/api_keys) | ~$0.001–0.005 |
+
+- The key lives in your browser's `localStorage` (one slot per provider — swap anytime)
+- It's sent only when you submit, forwarded directly to the provider
 - We never store it, log it, or proxy it
-- Each search costs roughly **$0.01–$0.03** on your account
 
 That's the whole privacy model — no DB, no accounts, no telemetry.
 
@@ -31,19 +36,27 @@ That's the whole privacy model — no DB, no accounts, no telemetry.
 your paragraph
       │
       ▼
-[Claude Haiku] extracts a role profile
+[fast model] extracts a role profile
    (skills · seniority · domain · location · remote pref)
       │
       ├─────► fetches fresh jobs from public sources
       │
       ▼
-[Claude Sonnet] ranks each job into LAND / STRETCH / LEAP
+[smart model] ranks each job into LAND / STRETCH / LEAP
       └── for stretch/leap, writes specific skills to add
           and a one-line learning path
       │
       ▼
 results page
 ```
+
+Provider → model defaults:
+
+| Provider | Extract (fast) | Rank (smart) |
+|---|---|---|
+| Claude | `claude-haiku-4-5` | `claude-sonnet-4-6` |
+| OpenAI | `gpt-4o-mini` | `gpt-4o` |
+| DeepSeek | `deepseek-chat` | `deepseek-chat` |
 
 ## Run locally
 
@@ -62,7 +75,7 @@ Open http://localhost:3000 and paste your Anthropic key into the dialog.
 
 - Next.js 16 (App Router, Server Actions, Turbopack)
 - shadcn/ui + Tailwind v4
-- Vercel AI SDK + Anthropic Claude (Haiku for extraction, Sonnet for ranking)
+- Vercel AI SDK + Anthropic / OpenAI / DeepSeek providers
 - Zod for structured outputs
 
 ## Add a job source

@@ -1,7 +1,7 @@
 import { generateObject } from "ai";
-import { createAnthropic } from "@ai-sdk/anthropic";
 import { z } from "zod";
 import type { RoleProfile } from "@/lib/types";
+import { getExtractModel, type ProviderId } from "@/lib/providers";
 
 const ProfileSchema = z.object({
   current_title: z.string().describe("Best-guess job title for this person right now"),
@@ -15,11 +15,11 @@ const ProfileSchema = z.object({
 
 export async function extractProfile(
   paragraph: string,
+  provider: ProviderId,
   apiKey: string
 ): Promise<RoleProfile> {
-  const client = createAnthropic({ apiKey });
   const { object } = await generateObject({
-    model: client("claude-haiku-4-5-20251001"),
+    model: getExtractModel(provider, apiKey),
     schema: ProfileSchema,
     prompt: `Read this person's plain-English description of their current role and extract a structured profile.
 
