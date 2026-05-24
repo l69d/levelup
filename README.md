@@ -2,6 +2,8 @@
 
 **Find your next role — and the one after that.**
 
+🌐 **Live:** [levelup-one-rosy.vercel.app](https://levelup-one-rosy.vercel.app)
+
 Paste a paragraph about what you do today. levelup returns:
 
 - **Land today** — jobs you can apply to right now
