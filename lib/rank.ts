@@ -1,5 +1,5 @@
 import { generateObject } from "ai";
-import { anthropic } from "@ai-sdk/anthropic";
+import { createAnthropic } from "@ai-sdk/anthropic";
 import { z } from "zod";
 import type { RawJob, RankedJob, RoleProfile, Tier } from "@/lib/types";
 
@@ -18,7 +18,8 @@ const RankSchema = z.object({
 
 export async function rankJobs(
   profile: RoleProfile,
-  jobs: RawJob[]
+  jobs: RawJob[],
+  apiKey: string
 ): Promise<RankedJob[]> {
   if (jobs.length === 0) return [];
 
@@ -31,8 +32,9 @@ export async function rankJobs(
     desc: j.description.slice(0, 400),
   }));
 
+  const client = createAnthropic({ apiKey });
   const { object } = await generateObject({
-    model: anthropic("claude-sonnet-4-6"),
+    model: client("claude-sonnet-4-6"),
     schema: RankSchema,
     prompt: `You are a senior career coach matching a candidate to job listings.
 

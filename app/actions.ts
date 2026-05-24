@@ -7,7 +7,7 @@ import type { LevelupResult } from "@/lib/types";
 
 export type ActionState =
   | { ok: true; result: LevelupResult }
-  | { ok: false; error: string }
+  | { ok: false; error: string; missingKey?: boolean }
   | null;
 
 export async function findRoles(
@@ -21,22 +21,42 @@ export async function findRoles(
   if (paragraph.length > 4000) {
     return { ok: false, error: "Keep it under 4000 characters. A short paragraph is enough." };
   }
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return { ok: false, error: "Server is missing ANTHROPIC_API_KEY. Set it in .env.local." };
+
+  const userKey = String(formData.get("apiKey") ?? "").trim();
+  const apiKey = userKey || process.env.ANTHROPIC_API_KEY || "";
+  if (!apiKey) {
+    return {
+      ok: false,
+      error: "Add your Anthropic API key to continue. It stays in your browser and is sent only when you submit.",
+      missingKey: true,
+    };
   }
 
   try {
     const [profile, allJobs] = await Promise.all([
-      extractProfile(paragraph),
+      extractProfile(paragraph, apiKey),
       fetchAllJobs(),
     ]);
-    const ranked = await rankJobs(profile, allJobs);
+    const ranked = await rankJobs(profile, allJobs, apiKey);
     return {
       ok: true,
       result: { profile, jobs: ranked, scanned_count: allJobs.length },
     };
   } catch (e) {
-    const msg = e instanceof Error ? e.message : "Unknown error";
-    return { ok: false, error: `Something went wrong: ${msg}` };
+    const raw = e instanceof Error ? e.message : "Unknown error";
+    const msg = redactKey(raw, apiKey);
+    const isAuth = /401|invalid.*api.?key|authentication/i.test(msg);
+    return {
+      ok: false,
+      error: isAuth
+        ? "That API key was rejected by Anthropic. Double-check it (starts with sk-ant-…)."
+        : `Something went wrong: ${msg}`,
+      missingKey: isAuth,
+    };
   }
+}
+
+function redactKey(s: string, key: string): string {
+  if (!key) return s;
+  return s.split(key).join("sk-ant-***");
 }
