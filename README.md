@@ -117,9 +117,17 @@ const results = await Promise.allSettled([
 
 Open a PR. New sources are the highest-value contribution.
 
+### Sources wired today
+
+- **RemoteOK** — JSON API, ~70–100 jobs
+- **HN "Who is hiring"** monthly thread — Algolia HN API, ~80 jobs
+- **Remotive** — JSON API, ~20 jobs
+- **WeWorkRemotely** — RSS (programming + devops/sysadmin), ~40 jobs
+
+Round-robin merged so the first jobs to rank draw from every source. Roughly 200 fresh jobs per run; the LLM ranks the top 100.
+
 ### Sources we'd love added
 
-- HN "Who is hiring" monthly thread
 - YC Work-at-a-Startup
 - Adzuna (free API key, global coverage)
 - Wellfound / AngelList

@@ -4,7 +4,7 @@ import type { RawJob, RankedJob, RoleProfile, Tier } from "@/lib/types";
 import { getRankModel, type ProviderId } from "@/lib/providers";
 
 const BATCH_SIZE = 20;
-const MAX_JOBS = 60;
+const MAX_JOBS = 100;
 
 const RankingEntry = z.object({
   job_id: z.string(),
