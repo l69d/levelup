@@ -5,6 +5,7 @@ import { fetchRemotive } from "./remotive";
 import { fetchWWR } from "./weworkremotely";
 import { fetchHimalayas } from "./himalayas";
 import { fetchJobicy } from "./jobicy";
+import { fetchArbeitnow } from "./arbeitnow";
 
 export async function fetchAllJobs(): Promise<RawJob[]> {
   const results = await Promise.allSettled([
@@ -14,6 +15,7 @@ export async function fetchAllJobs(): Promise<RawJob[]> {
     fetchWWR(),
     fetchHimalayas(),
     fetchJobicy(),
+    fetchArbeitnow(),
   ]);
   const buckets: RawJob[][] = results.map((r) =>
     r.status === "fulfilled" ? r.value : []
