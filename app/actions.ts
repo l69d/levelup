@@ -57,13 +57,19 @@ export async function findRoles(
     const raw = e instanceof Error ? e.message : "Unknown error";
     const msg = redactKey(raw, apiKey);
     const isAuth = /401|invalid.*api.?key|authentication|unauthorized/i.test(msg);
-    return {
-      ok: false,
-      error: isAuth
-        ? "That API key was rejected by the provider. Double-check it and try again."
-        : `Something went wrong: ${msg}`,
-      missingKey: isAuth,
-    };
+    const isQuota = /quota|insufficient[_ ]?(funds|credit|balance)|billing|payment[_ ]?required|exceeded/i.test(msg);
+    const isRate = /\b429\b|rate.?limit|too[_ ]?many[_ ]?requests/i.test(msg) && !isQuota;
+    let error: string;
+    if (isAuth) {
+      error = "That API key was rejected by the provider. Double-check it and try again.";
+    } else if (isQuota) {
+      error = `Your ${provider === "anthropic" ? "Anthropic" : provider === "openai" ? "OpenAI" : "DeepSeek"} account is out of credits. Top up your account, or switch providers in the key dialog.`;
+    } else if (isRate) {
+      error = "The provider is rate-limiting us. Wait a few seconds and try again.";
+    } else {
+      error = `Something went wrong: ${msg.slice(0, 200)}`;
+    }
+    return { ok: false, error, missingKey: isAuth };
   }
 }
 
