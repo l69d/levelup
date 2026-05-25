@@ -123,8 +123,11 @@ Open a PR. New sources are the highest-value contribution.
 - **HN "Who is hiring"** monthly thread — Algolia HN API, ~80 jobs
 - **Remotive** — JSON API, ~20 jobs
 - **WeWorkRemotely** — RSS (programming + devops/sysadmin), ~40 jobs
+- **Himalayas** — JSON API, ~80 jobs (paginated, remote-only)
+- **Jobicy** — JSON API, ~80 jobs (remote, global)
+- **Arbeitnow** — JSON API, ~80 jobs (EU-heavy, mixed remote/on-site)
 
-Round-robin merged so the first jobs to rank draw from every source. Roughly 200 fresh jobs per run; the LLM ranks the top 100.
+Round-robin merged so the first jobs to rank draw from every source. Roughly 400+ fresh jobs per run; the LLM ranks the top 100.
 
 ### Sources we'd love added
 
