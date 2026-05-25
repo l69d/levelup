@@ -1,9 +1,10 @@
 import { LandingForm } from "@/components/landing-form";
+import { HowItWorks } from "@/components/how-it-works";
 
 export default function Home() {
   return (
     <main className="flex-1 w-full flex flex-col items-center px-6 py-12 sm:py-20">
-      <div className="w-full max-w-3xl flex flex-col gap-10">
+      <div className="w-full max-w-3xl flex flex-col gap-12">
         <header className="flex flex-col gap-4 text-center sm:text-left">
           <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-balance">
             What&apos;s your <span className="text-emerald-600 dark:text-emerald-400">next role</span>?
@@ -15,6 +16,8 @@ export default function Home() {
         </header>
 
         <LandingForm />
+
+        <HowItWorks />
 
         <footer className="text-xs text-muted-foreground border-t pt-6 flex flex-wrap items-center gap-3 justify-between">
           <span>
