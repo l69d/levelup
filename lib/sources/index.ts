@@ -1,4 +1,5 @@
 import type { RawJob } from "@/lib/types";
+import { safeHref } from "@/lib/safe-url";
 import { fetchRemoteOK } from "./remoteok";
 import { fetchHN } from "./hn";
 import { fetchRemotive } from "./remotive";
@@ -18,9 +19,18 @@ export async function fetchAllJobs(): Promise<RawJob[]> {
     fetchArbeitnow(),
   ]);
   const buckets: RawJob[][] = results.map((r) =>
-    r.status === "fulfilled" ? r.value : []
+    r.status === "fulfilled" ? sanitizeBucket(r.value) : []
   );
   return interleaveAndDedupe(buckets);
+}
+
+function sanitizeBucket(jobs: RawJob[]): RawJob[] {
+  return jobs
+    .map((j) => {
+      const safe = safeHref(j.url);
+      return safe ? { ...j, url: safe } : null;
+    })
+    .filter((j): j is RawJob => j !== null);
 }
 
 /**

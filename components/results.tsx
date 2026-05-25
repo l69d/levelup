@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { safeHref } from "@/lib/safe-url";
 import type { LevelupResult, RankedJob, Tier } from "@/lib/types";
 
 const TIER_META: Record<Tier, { label: string; sub: string; pillClass: string }> = {
@@ -72,20 +73,28 @@ function TierSection({ tier, jobs }: { tier: Tier; jobs: RankedJob[] }) {
 function JobCard({ rj }: { rj: RankedJob }) {
   const meta = TIER_META[rj.tier];
   const { job } = rj;
+  const href = safeHref(job.url);
+  const TitleContent = (
+    <CardTitle className="text-base leading-snug">
+      {href ? (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:underline underline-offset-4"
+        >
+          {job.title}
+        </a>
+      ) : (
+        <span>{job.title}</span>
+      )}
+    </CardTitle>
+  );
   return (
     <Card className="overflow-hidden">
       <CardHeader className="flex flex-row items-start justify-between gap-4 space-y-0">
         <div className="flex-1 min-w-0">
-          <CardTitle className="text-base leading-snug">
-            <a
-              href={job.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:underline underline-offset-4"
-            >
-              {job.title}
-            </a>
-          </CardTitle>
+          {TitleContent}
           <p className="text-sm text-muted-foreground mt-1 truncate">
             {job.company}
             {job.location ? ` · ${job.location}` : ""}
